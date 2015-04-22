@@ -43,7 +43,13 @@ if (!empty($table_data)): ?>
         if (empty($data)) {
             $table = '';
         } else {
-            $table = '<table class="table table-bordered">';
+            $custom_css_class = '';
+            $b = Block::getByID($bID, Page::getCurrentPage(), $this->block->getAreaHandle());
+            if ($b && $b->getCustomStyle() && $b->getCustomStyle()->getStyleSet()) {
+                $custom_css_class = $b->getCustomStyle()->getStyleSet()->getCustomClass();
+            }
+
+            $table = '<table class="table ' . $custom_css_class . ' ">';
 
             if ($header) {
                 $table .= '<thead>';
