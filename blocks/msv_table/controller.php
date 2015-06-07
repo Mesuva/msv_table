@@ -19,6 +19,8 @@ class Controller extends BlockController {
 	protected $btSupportsInlineEdit = true;
 	protected $btSupportsInlineAdd = true;
 	
+	protected $btDefaultSet = 'basic';
+	
 	public function getSearchableContent() {
 		$content = array();
 		$content[] = $this->table_data;
