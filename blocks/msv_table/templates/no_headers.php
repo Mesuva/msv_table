@@ -44,12 +44,7 @@ if (!empty($table_data)): ?>
         if (empty($data)) {
             $table = '';
         } else {
-            $custom_css_class = '';
-            $b = Block::getByID($bID, Page::getCurrentPage(), $this->block->getAreaHandle());
-            if ($b && $b->getCustomStyle() && $b->getCustomStyle()->getStyleSet()) {
-                $custom_css_class = $b->getCustomStyle()->getStyleSet()->getCustomClass();
-            }
-            $table = '<table class="table ' . $custom_css_class . ' ">';
+            $table = '<table class="table table-bordered">';
 
             if ($header) {
                 $table .= '<thead>';
