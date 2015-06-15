@@ -69,24 +69,19 @@ if (!empty($table_data)): ?>
 					$table .= '<tr>';
 				}
 
-
+				if ($rowcount == 0 && $header) {
+					$ct = 'th'  ;
+				} else {
+					$ct = 'td';
+				}
 
 				foreach($row as $val) {
-
-					if (($rowcount == 0 || $colcount == 0) && $header) {
-						$ct = 'th'  ;
-					} else {
-						$ct = 'td';
-					}
-
 					$val =  trim($th->entities($val));
 					$empty = '';
 
 					if ($val == '') {
 						$empty = ' empty';
 					}
-
-                    $val = Markdown::defaultTransform($val);
 
 					if ($metadata[$rowcount][$colcount]->colspan > 1) {
 

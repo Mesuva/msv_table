@@ -1,4 +1,5 @@
 <?php  defined('C5_EXECUTE') or die("Access Denied.");
+use \Michelf\Markdown;
 $nh = Core::make('helper/navigation');
 $json = Core::make('helper/json');
 $th = Core::make('helper/text');
@@ -48,7 +49,6 @@ if (!empty($table_data)): ?>
             if ($b && $b->getCustomStyle() && $b->getCustomStyle()->getStyleSet()) {
                 $custom_css_class = $b->getCustomStyle()->getStyleSet()->getCustomClass();
             }
-
             $table = '<table class="table ' . $custom_css_class . ' ">';
 
             if ($header) {
@@ -83,6 +83,8 @@ if (!empty($table_data)): ?>
                         $empty = ' empty';
                     }
 
+                    $val = Markdown::defaultTransform($val);
+
                     if ($metadata[$rowcount][$colcount]->colspan > 1) {
 
                         for($i = $colcount + 1; $i < $metadata[$rowcount][$colcount]->colspan + $colcount; $i++ ) {
@@ -110,7 +112,7 @@ if (!empty($table_data)): ?>
                         if ($rowcount == 0) {
                             $table .= '<' . $ct . ($metadata[$rowcount][$colcount]->colspan > 1 ? ' colspan="' . $metadata[$rowcount][$colcount]->colspan . '"' : '') .  ' class="col' . $colcount . $empty . ' ' .  $metadata[$rowcount][$colcount]->className . '">' . $val . '</' . $ct . '>';
                         } else{
-                            $table .= '<' . $ct . ($metadata[$rowcount][$colcount]->colspan > 1 ? ' colspan="' . $metadata[$rowcount][$colcount]->colspan . '" ': '') .  ($metadata[$rowcount][$colcount]->rowspan > 1 ? 'rowspan="' . $metadata[$rowcount][$colcount]->rowspan . '"' : '') . ' class="col' . $colcount . $empty . ' ' . $metadata[$rowcount][$colcount]->className  . '">' . $val . '</' . $ct . '>';
+                            $table .= '<' . $ct . ($metadata[$rowcount][$colcount]->colspan > 1 ? ' colspan="' . $metadata[$rowcount][$colcount]->colspan . '" ': '') .  ($metadata[$rowcount][$colcount]->rowspan > 1 ? ' rowspan="' . $metadata[$rowcount][$colcount]->rowspan . '"' : '') . ' class="col' . $colcount . $empty . ' ' . $metadata[$rowcount][$colcount]->className  . '">' . $val . '</' . $ct . '>';
                         }
 
                     }
