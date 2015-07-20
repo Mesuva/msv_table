@@ -78,7 +78,9 @@ if (!empty($table_data)): ?>
                         $empty = ' empty';
                     }
 
+                    $val = nl2br($val);
                     $val = Markdown::defaultTransform($val);
+                    $val = str_replace(array('<p>', '</p>'),'', $val);
 
                     if ($metadata[$rowcount][$colcount]->colspan > 1) {
 

@@ -78,6 +78,8 @@ if (!empty($table_data)): ?>
 						$empty = ' empty';
 					}
 
+					$val = nl2br($val);
+
 					if ($metadata[$rowcount][$colcount]->colspan > 1) {
 
 						for($i = $colcount + 1; $i < $metadata[$rowcount][$colcount]->colspan + $colcount; $i++ ) {

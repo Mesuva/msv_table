@@ -10,7 +10,7 @@ class Controller extends Package {
 
     protected $pkgHandle = 'msv_table';
     protected $appVersionRequired = '5.7.3';
-    protected $pkgVersion = '0.9.4';
+    protected $pkgVersion = '0.9.5';
 
     public function getPackageDescription() {
         return t("A block to quickly enter and display tabular data.");
