@@ -44,7 +44,8 @@ if (!empty($table_data)): ?>
 		if (empty($data)) {
 			$table = '';
 		} else {
-			$table = '<table class="table table-bordered">';
+			$table = '<div class="table-responsive">';
+			$table .= '<table class="table table-bordered">';
 
 			if ($header) {
 				$table .= '<thead>';
@@ -71,7 +72,7 @@ if (!empty($table_data)): ?>
 				}
 
 				foreach($row as $val) {
-					$val =  trim($th->entities($val));
+					//$val =  trim($th->entities($val));// add in comment to display HTML content like image
 					$empty = '';
 
 					if ($val == '') {
@@ -130,6 +131,7 @@ if (!empty($table_data)): ?>
 			}
 
 			$table .= '</table>';
+			$table .= '</div>';
 		}
 
 		echo $table;
@@ -159,6 +161,22 @@ if (!empty($table_data)): ?>
 	.table_display .htMiddle {
 		vertical-align: middle;
 	}
+	
+	.table_display .htBold{
+        	font-weight: bold;
+    	}
+    	.table_display td.highlightedRed{
+        	background: red;
+        	color: white;
+    	}
+    	.table_display td.highlightedGreen{
+        	background: green;
+        	color: white;
+    	}
+    	.table_display td.highlightedOrange{
+        	background: orange;
+        	color: white;
+    	}
 </style>
 
 
