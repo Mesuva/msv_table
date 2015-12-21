@@ -167,16 +167,16 @@ if (!empty($table_data)): ?>
 		vertical-align: middle;
 	}
 	.table_display .htBold{
-        font-weight: bold;
-    }
-
-    .table_display td.highlighted{
-        background: yellow;
-    }
-
-    .table_display td.italic{
-        font-style: italic;
-    }
+	        font-weight: bold;
+	}
+	
+	.table_display td.highlighted{
+		background: yellow;
+	}
+	
+	.table_display td.italic{
+		font-style: italic;
+	}
 </style>
 
 
