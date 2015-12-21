@@ -17,19 +17,12 @@ if ($table_metadata) {
         font-weight: bold;
     }
 
-    .table_display td.highlightedRed{
-        background: red;
-        color: white;
+    .table_display td.highlighted{
+        background: yellow;
     }
 
-    .table_display td.highlightedGreen{
-        background: green;
-        color: white;
-    }
-
-    .table_display td.highlightedOrange{
-        background: orange;
-        color: white;
+    .table_display td.italic{
+        font-style: italic;
     }
 
 </style>
@@ -128,6 +121,9 @@ if ($table_metadata) {
         },
         contextMenu: {
             callback: function(key, options) {
+                /*
+                 * For bold font
+                 */
                 if(key == 'bold'){
                     //Return index of the currently selected cells as an array [startRow, startCol, endRow, endCol]
                     var sel = this.getSelected() ;
@@ -145,39 +141,89 @@ if ($table_metadata) {
                     }
                     for(i = istart; i < iend+1; i++){
                         for(j = jstart; j < jend+1; j++){
-                            //var boldValues = '<b>'+this.getDataAtCell(i,j)+'</b>';
-                            //this.setDataAtCell(i,j, boldValues);
                             var cell = this.getCell(i,j);
-                            $(cell).addClass('htBold');
-                            this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className+' htBold');
+                            if($(cell).hasClass('htBold')){
+                                $(cell).removeClass('htBold');
+                                this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className.replace(/htBold/gi,''));
+                            }else{
+                                $(cell).addClass('htBold');
+                                this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className+' htBold');
+                            }
                         }
                     }
                 }
 
-                if(key == 'normalText'){
+
+                /*
+                 * For highlight cell
+                 */
+                if (key == 'highlighted'){
                     //Return index of the currently selected cells as an array [startRow, startCol, endRow, endCol]
                     var sel = this.getSelected();
-                    var i, j, istart, iend, jstart, jend ;
+                    var i, j, istart, iend, jstart, jend;
 
-                    if(sel[0] > sel[2] ){
-                        istart = sel[2] ; iend = sel[0] ;
-                    }else{
-                        istart = sel[0] ; iend = sel[2] ;
+                    if (sel[0] > sel[2]) {
+                        istart = sel[2];
+                        iend = sel[0];
+                    } else {
+                        istart = sel[0];
+                        iend = sel[2];
                     }
 
-                    if(sel[1] > sel[3] ){
-                        jstart = sel[3] ; jend = sel[1] ;
-                    }else{
-                        jstart = sel[1] ; jend = sel[3] ;
+                    if (sel[1] > sel[3]) {
+                        jstart = sel[3];
+                        jend = sel[1];
+                    } else {
+                        jstart = sel[1];
+                        jend = sel[3];
                     }
-                    for(i = istart; i < iend+1; i++){
-                        for(j = jstart; j < jend+1; j++){
-                            /*var normalValues = this.getDataAtCell(i,j);
-                            var regex = /<b\s*[\/]?>/gi;
-                            this.setDataAtCell(i,j, normalValues.replace(regex, "").replace(/<[\/]b\s*?>/gi,""));*/
+                    for (i = istart; i < iend + 1; i++) {
+                        for (j = jstart; j < jend + 1; j++) {
                             var cell = this.getCell(i,j);
-                            $(cell).removeClass('htBold');
-                            this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className.replace(/htBold/gi,''));
+                            if($(cell).hasClass('highlighted')){
+                                $(cell).removeClass('highlighted');
+                                this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className.replace(/highlighted/gi,''));
+                            }else{
+                                $(cell).addClass('highlighted');
+                                this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className+' highlighted');
+                            }
+                        }
+                    }
+                }
+
+                /*
+                * For italic font
+                */
+                if (key == 'italic'){
+                    //Return index of the currently selected cells as an array [startRow, startCol, endRow, endCol]
+                    var sel = this.getSelected();
+                    var i, j, istart, iend, jstart, jend;
+
+                    if (sel[0] > sel[2]) {
+                        istart = sel[2];
+                        iend = sel[0];
+                    } else {
+                        istart = sel[0];
+                        iend = sel[2];
+                    }
+
+                    if (sel[1] > sel[3]) {
+                        jstart = sel[3];
+                        jend = sel[1];
+                    } else {
+                        jstart = sel[1];
+                        jend = sel[3];
+                    }
+                    for (i = istart; i < iend + 1; i++) {
+                        for (j = jstart; j < jend + 1; j++) {
+                            var cell = this.getCell(i,j);
+                            if($(cell).hasClass('italic')){
+                                $(cell).removeClass('italic');
+                                this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className.replace(/italic/gi,''));
+                            }else{
+                                $(cell).addClass('italic');
+                                this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className+' italic');
+                            }
                         }
                     }
                 }
@@ -197,214 +243,10 @@ if ($table_metadata) {
                 "undo": {},
                 "redo": {},
                 "hsep5": "---------",
-                "bold": {"name": "Bold font"},
-                "normalText": {"name": "Normal font"},
-                "hsep6": "---------",
-                "highlightedMenu": {
-                    "name": "Highlight cells",
-                    submenu: {
-                        items: [
-                            {
-                                name: "Red",
-                                callback: function (key, options) {
-                                    if (key == 'highlightedRed'){
-                                        //Return index of the currently selected cells as an array [startRow, startCol, endRow, endCol]
-                                            var sel = this.getSelected();
-                                        var i, j, istart, iend, jstart, jend;
-
-                                        if (sel[0] > sel[2]) {
-                                            istart = sel[2];
-                                            iend = sel[0];
-                                        } else {
-                                            istart = sel[0];
-                                            iend = sel[2];
-                                        }
-
-                                        if (sel[1] > sel[3]) {
-                                            jstart = sel[3];
-                                            jend = sel[1];
-                                        } else {
-                                            jstart = sel[1];
-                                            jend = sel[3];
-                                        }
-                                        for (i = istart; i < iend + 1; i++) {
-                                            for (j = jstart; j < jend + 1; j++) {
-                                                var cell = this.getCell(i,j);
-                                                if($(cell).hasClass('highlightedRed')){
-                                                    $(cell).removeClass('highlightedRed');
-                                                    this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className.replace(/highlightedRed/gi,''));
-                                                }else{
-                                                    $(cell).addClass('highlightedRed');
-                                                    this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className+' highlightedRed');
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                key: "highlightedRed"
-                            },
-                            {
-                                name: "Green",
-                                callback: function (key, options) {
-                                    if (key == 'highlightedGreen'){
-                                        //Return index of the currently selected cells as an array [startRow, startCol, endRow, endCol]
-                                        var sel = this.getSelected();
-                                        var i, j, istart, iend, jstart, jend;
-
-                                        if (sel[0] > sel[2]) {
-                                            istart = sel[2];
-                                            iend = sel[0];
-                                        } else {
-                                            istart = sel[0];
-                                            iend = sel[2];
-                                        }
-
-                                        if (sel[1] > sel[3]) {
-                                            jstart = sel[3];
-                                            jend = sel[1];
-                                        } else {
-                                            jstart = sel[1];
-                                            jend = sel[3];
-                                        }
-                                        for (i = istart; i < iend + 1; i++) {
-                                            for (j = jstart; j < jend + 1; j++) {
-                                                var cell = this.getCell(i,j);
-                                                if($(cell).hasClass('highlightedGreen')){
-                                                    $(cell).removeClass('highlightedGreen');
-                                                    this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className.replace(/highlightedGreen/gi,''));
-                                                }else{
-                                                    $(cell).addClass('highlightedGreen');
-                                                    this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className+' highlightedGreen');
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                key: "highlightedGreen"
-                            },
-                            {
-                                name: "Orange",
-                                callback: function (key, options) {
-                                    if (key == 'highlightedOrange'){
-                                        //Return index of the currently selected cells as an array [startRow, startCol, endRow, endCol]
-                                        var sel = this.getSelected();
-                                        var i, j, istart, iend, jstart, jend;
-
-                                        if (sel[0] > sel[2]) {
-                                            istart = sel[2];
-                                            iend = sel[0];
-                                        } else {
-                                            istart = sel[0];
-                                            iend = sel[2];
-                                        }
-
-                                        if (sel[1] > sel[3]) {
-                                            jstart = sel[3];
-                                            jend = sel[1];
-                                        } else {
-                                            jstart = sel[1];
-                                            jend = sel[3];
-                                        }
-                                        for (i = istart; i < iend + 1; i++) {
-                                            for (j = jstart; j < jend + 1; j++) {
-                                                var cell = this.getCell(i,j);
-                                                if($(cell).hasClass('highlightedOrange')){
-                                                    $(cell).removeClass('highlightedOrange');
-                                                    this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className.replace(/highlightedOrange/gi,''));
-                                                }else{
-                                                    $(cell).addClass('highlightedOrange');
-                                                    this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className+' highlightedOrange');
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                key: "highlightedOrange"
-                            },
-                            {
-                                name: "Add Class",
-                                // superseeds "global" callback
-                                callback: function(key, options) {
-
-                                    if (key == 'highlightedCustomClass'){
-                                        var addClassManual = prompt("Please enter class name");
-                                        //Return index of the currently selected cells as an array [startRow, startCol, endRow, endCol]
-                                        var sel = this.getSelected();
-                                        var i, j, istart, iend, jstart, jend;
-
-                                        if (sel[0] > sel[2]) {
-                                            istart = sel[2];
-                                            iend = sel[0];
-                                        } else {
-                                            istart = sel[0];
-                                            iend = sel[2];
-                                        }
-
-                                        if (sel[1] > sel[3]) {
-                                            jstart = sel[3];
-                                            jend = sel[1];
-                                        } else {
-                                            jstart = sel[1];
-                                            jend = sel[3];
-                                        }
-                                        for (i = istart; i < iend + 1; i++) {
-                                            for (j = jstart; j < jend + 1; j++) {
-                                                var cell = this.getCell(i,j);
-                                                if (addClassManual != null) {
-                                                    //console.log( person );
-                                                    $(cell).addClass(addClassManual);
-                                                    this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className+' '+addClassManual);
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                key: "highlightedCustomClass"
-                            },
-                            {
-                                name: "Remove Class",
-                                //superseeds "global" callback
-                                callback: function(key, options) {
-
-                                    if (key == 'highlightedRemoveCustomClass'){
-                                        var removeClassManual = prompt("Please enter class name to remove");
-                                        //Return index of the currently selected cells as an array [startRow, startCol, endRow, endCol]
-                                        var sel = this.getSelected();
-                                        var i, j, istart, iend, jstart, jend;
-
-                                        if (sel[0] > sel[2]) {
-                                            istart = sel[2];
-                                            iend = sel[0];
-                                        } else {
-                                            istart = sel[0];
-                                            iend = sel[2];
-                                        }
-
-                                        if (sel[1] > sel[3]) {
-                                            jstart = sel[3];
-                                            jend = sel[1];
-                                        } else {
-                                            jstart = sel[1];
-                                            jend = sel[3];
-                                        }
-
-                                        for (i = istart; i < iend + 1; i++) {
-                                            for (j = jstart; j < jend + 1; j++) {
-                                                var cell = this.getCell(i,j);
-                                                if (removeClassManual != null) {
-                                                    //console.log( person );
-                                                    $(cell).removeClass(removeClassManual);
-                                                    this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className.replace(removeClassManual,''));
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                key: "highlightedRemoveCustomClass"
-                            }
-                        ]
-                    }
-                }
+                "bold": {"name": "Bold"},
+                "italic": {"name": "Italic"},
+                "highlighted": {"name": "Highlight"}
+                
             }
         },
         cell: <?php echo $metadata; ?>,
