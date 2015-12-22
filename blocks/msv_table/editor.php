@@ -119,6 +119,34 @@ if ($table_metadata) {
             cellProperties.renderer = "defaultRenderer"; //uses lookup map
             return cellProperties;
         },
+        afterContextMenuShow :function(key, options){
+            var sel = this.getSelected() ;
+            var i =sel[0], j =sel[1];
+            var cell = this.getCell(i,j);
+            if($(cell).hasClass('htBold')){
+                $('.htContextMenu .htCore tr td div').filter(function() {
+                    if($(this).text() == "Bold"){
+                        $(this).append('<span class="selected">✓</span>');
+                    }
+                });
+            }
+
+            if($(cell).hasClass('italic')){
+                $('.htContextMenu .htCore tr td div').filter(function() {
+                    if($(this).text() == "Italic"){
+                        $(this).append('<span class="selected">✓</span>');
+                    }
+                });
+            }
+
+            if($(cell).hasClass('highlighted')){
+                $('.htContextMenu .htCore tr td div').filter(function() {
+                    if($(this).text() == "Highlight"){
+                        $(this).append('<span class="selected">✓</span>');
+                    }
+                });
+            }
+        },
         contextMenu: {
             callback: function(key, options) {
                 /*
