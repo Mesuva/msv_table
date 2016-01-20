@@ -12,6 +12,20 @@ if ($table_metadata) {
 }
 ?>
 
+<style>
+    .table_display .htBold{
+        font-weight: bold;
+    }
+
+    .table_display td.highlighted{
+        background: yellow;
+    }
+
+    .table_display td.italic{
+        font-style: italic;
+    }
+
+</style>
 
 <script type="text/javascript">
 
@@ -69,7 +83,7 @@ if ($table_metadata) {
     };
 
     function defaultRenderer(instance, td, row, col, prop, value, cellProperties) {
-        Handsontable.renderers.TextRenderer.apply(this, arguments);
+        Handsontable.renderers.HtmlRenderer.apply(this, arguments);
 
         <?php if ($template != 'no_headers.php') { ?>
         if (row == 0) {
@@ -98,12 +112,150 @@ if ($table_metadata) {
         minSpareRows: 1,
         minSpareCols: 1,
         mergeCells: true,
+        manualColumnResize: true,
+        manualRowResize: true,
         cells: function (row, col, prop) {
             var cellProperties = {};
             cellProperties.renderer = "defaultRenderer"; //uses lookup map
             return cellProperties;
         },
+        afterContextMenuShow :function(key, options){
+            var sel = this.getSelected() ;
+            var i =sel[0], j =sel[1];
+            var cell = this.getCell(i,j);
+            if($(cell).hasClass('htBold')){
+                $('.htContextMenu .htCore tr td div').filter(function() {
+                    if($(this).text() == "Bold"){
+                        $(this).append('<span class="selected">✓</span>');
+                    }
+                });
+            }
+
+            if($(cell).hasClass('italic')){
+                $('.htContextMenu .htCore tr td div').filter(function() {
+                    if($(this).text() == "Italic"){
+                        $(this).append('<span class="selected">✓</span>');
+                    }
+                });
+            }
+
+            if($(cell).hasClass('highlighted')){
+                $('.htContextMenu .htCore tr td div').filter(function() {
+                    if($(this).text() == "Highlight"){
+                        $(this).append('<span class="selected">✓</span>');
+                    }
+                });
+            }
+        },
         contextMenu: {
+            callback: function(key, options) {
+                /*
+                 * For bold font
+                 */
+                if(key == 'bold'){
+                    //Return index of the currently selected cells as an array [startRow, startCol, endRow, endCol]
+                    var sel = this.getSelected() ;
+                    var i, j, istart, iend, jstart, jend ;
+                    if(sel[0] > sel[2] ){
+                        istart = sel[2] ; iend = sel[0] ;
+                    }else{
+                        istart = sel[0] ; iend = sel[2] ;
+                     }
+
+                    if(sel[1] > sel[3] ){
+                        jstart = sel[3] ; jend = sel[1] ;
+                    }else{
+                        jstart = sel[1] ; jend = sel[3] ;
+                    }
+                    for(i = istart; i < iend+1; i++){
+                        for(j = jstart; j < jend+1; j++){
+                            var cell = this.getCell(i,j);
+                            if($(cell).hasClass('htBold')){
+                                $(cell).removeClass('htBold');
+                                this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className.replace(/htBold/gi,''));
+                            }else{
+                                $(cell).addClass('htBold');
+                                this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className+' htBold');
+                            }
+                        }
+                    }
+                }
+
+
+                /*
+                 * For highlight cell
+                 */
+                if (key == 'highlighted'){
+                    //Return index of the currently selected cells as an array [startRow, startCol, endRow, endCol]
+                    var sel = this.getSelected();
+                    var i, j, istart, iend, jstart, jend;
+
+                    if (sel[0] > sel[2]) {
+                        istart = sel[2];
+                        iend = sel[0];
+                    } else {
+                        istart = sel[0];
+                        iend = sel[2];
+                    }
+
+                    if (sel[1] > sel[3]) {
+                        jstart = sel[3];
+                        jend = sel[1];
+                    } else {
+                        jstart = sel[1];
+                        jend = sel[3];
+                    }
+                    for (i = istart; i < iend + 1; i++) {
+                        for (j = jstart; j < jend + 1; j++) {
+                            var cell = this.getCell(i,j);
+                            if($(cell).hasClass('highlighted')){
+                                $(cell).removeClass('highlighted');
+                                this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className.replace(/highlighted/gi,''));
+                            }else{
+                                $(cell).addClass('highlighted');
+                                this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className+' highlighted');
+                            }
+                        }
+                    }
+                }
+
+                /*
+                * For italic font
+                */
+                if (key == 'italic'){
+                    //Return index of the currently selected cells as an array [startRow, startCol, endRow, endCol]
+                    var sel = this.getSelected();
+                    var i, j, istart, iend, jstart, jend;
+
+                    if (sel[0] > sel[2]) {
+                        istart = sel[2];
+                        iend = sel[0];
+                    } else {
+                        istart = sel[0];
+                        iend = sel[2];
+                    }
+
+                    if (sel[1] > sel[3]) {
+                        jstart = sel[3];
+                        jend = sel[1];
+                    } else {
+                        jstart = sel[1];
+                        jend = sel[3];
+                    }
+                    for (i = istart; i < iend + 1; i++) {
+                        for (j = jstart; j < jend + 1; j++) {
+                            var cell = this.getCell(i,j);
+                            if($(cell).hasClass('italic')){
+                                $(cell).removeClass('italic');
+                                this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className.replace(/italic/gi,''));
+                            }else{
+                                $(cell).addClass('italic');
+                                this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className+' italic');
+                            }
+                        }
+                    }
+                }
+            },
             items: {
                 "row_above": {},
                 "row_below": {},
@@ -117,7 +269,12 @@ if ($table_metadata) {
                 "mergeCells" : {},
                 "hsep4": "---------",
                 "undo": {},
-                "redo": {}
+                "redo": {},
+                "hsep5": "---------",
+                "bold": {"name": "Bold"},
+                "italic": {"name": "Italic"},
+                "highlighted": {"name": "Highlight"}
+                
             }
         },
         cell: <?php echo $metadata; ?>,
