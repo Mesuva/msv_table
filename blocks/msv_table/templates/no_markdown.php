@@ -66,13 +66,13 @@ if (!empty($table_data)): ?>
 				}
 
 				if ($rowcount == 0 && $header) {
-					$ct = 'th';
+					$ct = 'th'  ;
 				} else {
 					$ct = 'td';
 				}
 
 				foreach($row as $val) {
-					//$val =  trim($th->entities($val)); // add in comment to display HTML content like image
+					//$val =  trim($th->entities($val));// add in comment to display HTML content like image
 					$empty = '';
 
 					if ($val == '') {
@@ -80,8 +80,6 @@ if (!empty($table_data)): ?>
 					}
 
 					$val = nl2br($val);
-                    $val = Markdown::defaultTransform($val);
-					$val = str_replace(array('<p>', '</p>'),'', $val);
 
 					if ($metadata[$rowcount][$colcount]->colspan > 1) {
 
@@ -163,6 +161,7 @@ if (!empty($table_data)): ?>
 	.table_display .htMiddle {
 		vertical-align: middle;
 	}
+	
 	.table_display .htBold{
 	        font-weight: bold;
 	}
