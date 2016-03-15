@@ -10,7 +10,7 @@ class Controller extends Package {
 
     protected $pkgHandle = 'msv_table';
     protected $appVersionRequired = '5.7.3';
-    protected $pkgVersion = '0.9.2';
+    protected $pkgVersion = '0.9.5';
 
     public function getPackageDescription() {
         return t("A block to quickly enter and display tabular data.");
@@ -25,19 +25,18 @@ class Controller extends Package {
         $this->configurePackage($pkg);
     }
 
-
     public function configurePackage($pkg) {
         $blk = BlockType::getByHandle('msv_table');
         if(!is_object($blk) ) {
-            BlockType::installBlockTypeFromPackage('msv_table', $pkg);
+            BlockType::installBlockType('msv_table', $pkg);
         }
     }
 
     public function on_start() {
         $al = AssetList::getInstance();
 
-        $al->register( 'javascript', 'handsontable', 'js/handsontable.full.min.js', array('version' => '0.12.2', 'position' => Asset::ASSET_POSITION_FOOTER, 'minify' => false, 'combine' => false), $this );
-        $al->register( 'css', 'handsontable', 'css/handsontable.full.min.css', array('version' => '0.12.2', 'position' => Asset::ASSET_POSITION_HEADER, 'minify' => false, 'combine' => false), $this );
+        $al->register( 'javascript', 'handsontable', 'js/handsontable.full.min.js', array('version' => '15.0-beta6', 'position' => Asset::ASSET_POSITION_FOOTER, 'minify' => false, 'combine' => false), $this );
+        $al->register( 'css', 'handsontable', 'css/handsontable.full.min.css', array('version' => '15.0-beta6', 'position' => Asset::ASSET_POSITION_HEADER, 'minify' => false, 'combine' => false), $this );
         $al->registerGroup('handsontable',
 
             array(
