@@ -79,7 +79,7 @@ if ($table_metadata) {
         <?php } ?>
 
         if (row == instance.countRows() - 1 || col == instance.countCols() - 1) {
-            td.style.background = '#666';
+            td.style.background = '#AAA';
         }
     }
 
@@ -127,13 +127,3 @@ if ($table_metadata) {
 
 
 </script>
-
-<style>
-    .handsontable {
-        z-index: 1000;
-    }
-</style>
-
-
-
- 

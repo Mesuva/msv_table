@@ -20,7 +20,7 @@ if ($b) {
 </ul>
 
 
-<textarea id="<?php echo $bID; ?>_table_data" name="table_data"  style="display:  none;  "><?php  echo $table_data; ?></textarea>
+<textarea id="<?php echo $bID; ?>_table_data" name="table_data"  style="display:  none;  "><?php  echo htmlspecialchars($table_data, ENT_NOQUOTES); ?></textarea>
 <textarea id="<?php echo $bID; ?>_table_metadata" name="table_metadata" style="display:  none;  "><?php  echo $table_metadata; ?></textarea>
 <div id="<?php echo $bID; ?>_tabledata"></div>
 

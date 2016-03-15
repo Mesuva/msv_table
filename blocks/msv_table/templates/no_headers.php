@@ -1,4 +1,5 @@
 <?php  defined('C5_EXECUTE') or die("Access Denied.");
+use \Michelf\Markdown;
 $nh = Core::make('helper/navigation');
 $json = Core::make('helper/json');
 $th = Core::make('helper/text');
@@ -77,6 +78,10 @@ if (!empty($table_data)): ?>
                         $empty = ' empty';
                     }
 
+                    $val = nl2br($val);
+                    $val = Markdown::defaultTransform($val);
+                    $val = str_replace(array('<p>', '</p>'),'', $val);
+
                     if ($metadata[$rowcount][$colcount]->colspan > 1) {
 
                         for($i = $colcount + 1; $i < $metadata[$rowcount][$colcount]->colspan + $colcount; $i++ ) {
@@ -104,7 +109,7 @@ if (!empty($table_data)): ?>
                         if ($rowcount == 0) {
                             $table .= '<' . $ct . ($metadata[$rowcount][$colcount]->colspan > 1 ? ' colspan="' . $metadata[$rowcount][$colcount]->colspan . '"' : '') .  ' class="col' . $colcount . $empty . ' ' .  $metadata[$rowcount][$colcount]->className . '">' . $val . '</' . $ct . '>';
                         } else{
-                            $table .= '<' . $ct . ($metadata[$rowcount][$colcount]->colspan > 1 ? ' colspan="' . $metadata[$rowcount][$colcount]->colspan . '" ': '') .  ($metadata[$rowcount][$colcount]->rowspan > 1 ? 'rowspan="' . $metadata[$rowcount][$colcount]->rowspan . '"' : '') . ' class="col' . $colcount . $empty . ' ' . $metadata[$rowcount][$colcount]->className  . '">' . $val . '</' . $ct . '>';
+                            $table .= '<' . $ct . ($metadata[$rowcount][$colcount]->colspan > 1 ? ' colspan="' . $metadata[$rowcount][$colcount]->colspan . '" ': '') .  ($metadata[$rowcount][$colcount]->rowspan > 1 ? ' rowspan="' . $metadata[$rowcount][$colcount]->rowspan . '"' : '') . ' class="col' . $colcount . $empty . ' ' . $metadata[$rowcount][$colcount]->className  . '">' . $val . '</' . $ct . '>';
                         }
 
                     }
