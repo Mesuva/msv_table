@@ -95,6 +95,10 @@ if ($table_metadata) {
         if (row == instance.countRows() - 1 || col == instance.countCols() - 1) {
             td.style.background = '#AAA';
         }
+
+        if (!value) {
+            td.innerHTML = '';
+        }
     }
 
     Handsontable.renderers.registerRenderer('defaultRenderer', defaultRenderer); //maps function to lookup string
@@ -262,8 +266,8 @@ if ($table_metadata) {
                 "col_left": {},
                 "col_right": {},
                 "hsep2": "---------",
-                "remove_row": {name:'Remove row(s)'},
-                "remove_col": {name:'Remove columns(s)'},
+                "remove_row": {name:'<?php echo t('Remove row(s)');?>'},
+                "remove_col": {name:'<?php echo t('Remove columns(s)');?>'},
                 "hsep3": "---------",
                 "alignment" : {},
                 "mergeCells" : {},
@@ -271,9 +275,9 @@ if ($table_metadata) {
                 "undo": {},
                 "redo": {},
                 "hsep5": "---------",
-                "bold": {"name": "Bold"},
-                "italic": {"name": "Italic"},
-                "highlighted": {"name": "Highlight"}
+                "bold": {"name": "<?php echo t('Bold');?>"},
+                "italic": {"name": "<?php echo t('Italic');?>"},
+                "highlighted": {"name": "<?php echo t('Highlight');?>"}
                 
             }
         },
@@ -283,8 +287,4 @@ if ($table_metadata) {
     });
 
 
-<<<<<<< HEAD
 </script>
-=======
-</script>
->>>>>>> 58c3eb21f904d29ca67866178b21ddf8f1194008
