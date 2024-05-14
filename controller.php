@@ -1,16 +1,16 @@
 <?php
 // Author: Ryan Hewitt - http://www.mesuva.com.au
 namespace Concrete\Package\MsvTable;
-use Package;
-use BlockType;
-use AssetList;
-use Asset;
+use Concrete\Core\Package\Package;
+use Concrete\Core\Block\BlockType\BlockType;
+use Concrete\Core\Asset\AssetList;
+use Concrete\Core\Asset\Asset;
 
 class Controller extends Package {
 
     protected $pkgHandle = 'msv_table';
-    protected $appVersionRequired = '5.7.3';
-    protected $pkgVersion = '0.9.5';
+    protected $appVersionRequired = '8.0';
+    protected $pkgVersion = '1.2';
 
     public function getPackageDescription() {
         return t("A block to quickly enter and display tabular data.");
@@ -35,8 +35,8 @@ class Controller extends Package {
     public function on_start() {
         $al = AssetList::getInstance();
 
-        $al->register( 'javascript', 'handsontable', 'js/handsontable.full.min.js', array('version' => '15.0-beta6', 'position' => Asset::ASSET_POSITION_FOOTER, 'minify' => false, 'combine' => false), $this );
-        $al->register( 'css', 'handsontable', 'css/handsontable.full.min.css', array('version' => '15.0-beta6', 'position' => Asset::ASSET_POSITION_HEADER, 'minify' => false, 'combine' => false), $this );
+        $al->register( 'javascript', 'handsontable', 'js/handsontable.full.min.js', array('version' => '6.2.2', 'position' => Asset::ASSET_POSITION_FOOTER, 'minify' => false, 'combine' => false), $this );
+        $al->register( 'css', 'handsontable', 'css/handsontable.full.min.css', array('version' => '6.2.2', 'position' => Asset::ASSET_POSITION_HEADER, 'minify' => false, 'combine' => false), $this );
         $al->registerGroup('handsontable',
 
             array(
@@ -44,8 +44,5 @@ class Controller extends Package {
                 array('css', 'handsontable'),
             )
         );
-
     }
-
-
 }

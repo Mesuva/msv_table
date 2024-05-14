@@ -1,5 +1,8 @@
 <?php  defined('C5_EXECUTE') or die("Access Denied.");
-$json = Core::make('helper/json');
+
+$app = \Concrete\Core\Support\Facade\Application::getFacadeApplication();
+$json = $app->make('helper/json');
+
 $template = '';
 if ($b) {
     $template = $b->getBlockFilename();

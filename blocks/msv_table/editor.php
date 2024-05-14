@@ -10,20 +10,52 @@ if ($table_data) {
 if ($table_metadata) {
     $metadata = $table_metadata;
 }
+
+$mergecells = json_decode($metadata, true);
+
+$newmergecells = [];
+
+foreach($mergecells as $mc) {
+    if (isset($mc['rowspan']) || isset($mc['colspan'])) {
+        $newmergecells[] = $mc;
+    }
+}
+
+$mergedata = json_encode($newmergecells);
+
 ?>
 
 <style>
-    .table_display .htBold{
+    .htCore td, .htCore th {
+        font-family: arial, sans-serif !important;
+    }
+
+    .htCore .htBold{
         font-weight: bold;
     }
 
-    .table_display td.highlighted{
+    .htCore td.highlighted{
         background: yellow;
     }
 
-    .table_display td.italic{
+    .htCore td.italic{
         font-style: italic;
     }
+
+    .htCore .highlight {
+        color: inherit !important;
+    }
+
+    .wtHolder {
+        height: auto !important;
+    }
+    .htContextMenu {
+        z-index: 100000 !important;
+    }
+    .ht_master .wtHolder {
+        overflow: auto;
+    }
+
 
 </style>
 
@@ -48,16 +80,15 @@ if ($table_metadata) {
     });
 
     var changeAction = function(changes, source) {
-        var ht = $("#<?php echo $bID; ?>_tabledata").handsontable('getInstance');
+        var ht = $("#<?php echo $uniqueid; ?>_tabledata").handsontable('getInstance');
         var rowList = ht.getData(0,0, ht.countRows() -2, ht.countCols() - 2);
-        $("#<?php echo $bID; ?>_table_data").val(JSON.stringify(rowList));
+        $("#<?php echo $uniqueid; ?>_table_data").val(JSON.stringify(rowList));
 
         var meta = [];
 
-        var spaninfo =  ht.mergeCells.mergedCellInfoCollection;
+        var spaninfo =  ht.getPlugin('mergeCells').mergedCellsCollection.mergedCells;
 
         for(i = 0; i < ht.countRows() - 1; i++ ) {
-
             for(j = 0; j < ht.countCols() - 1; j++) {
                 meta.push({row:i, col:j, className:ht.getCellMeta(i, j).className});
             }
@@ -77,7 +108,7 @@ if ($table_metadata) {
 
         }
 
-        $("#<?php echo $bID; ?>_table_metadata").val(JSON.stringify(meta));
+        $("#<?php echo $uniqueid; ?>_table_metadata").val(JSON.stringify(meta));
 
         return true;
     };
@@ -85,12 +116,12 @@ if ($table_metadata) {
     function defaultRenderer(instance, td, row, col, prop, value, cellProperties) {
         Handsontable.renderers.HtmlRenderer.apply(this, arguments);
 
-        <?php if ($template != 'no_headers.php') { ?>
-        if (row == 0) {
-            td.style.background = '#EEE';
-            td.style.fontWeight = 'bold';
-        }
-        <?php } ?>
+<!--        --><?php //if ($template != 'no_headers.php') { ?>
+//        if (row == 0) {
+//            td.style.background = '#EEE';
+//            td.style.fontWeight = 'bold';
+//        }
+//        <?php //} ?>
 
         if (row == instance.countRows() - 1 || col == instance.countCols() - 1) {
             td.style.background = '#AAA';
@@ -103,28 +134,35 @@ if ($table_metadata) {
 
     Handsontable.renderers.registerRenderer('defaultRenderer', defaultRenderer); //maps function to lookup string
 
-    $("#<?php echo $bID; ?>_tabledata").handsontable({
+    var maxwidth = $("#<?php echo $uniqueid; ?>_tabledata").width();
+
+    $("#<?php echo $uniqueid; ?>_tabledata").handsontable({
         data: <?php echo $value; ?>,
         startRows: 1,
         startCols: 2,
         minRows: 1,
         minCols: 2,
-        maxRows: 400,
-        maxCols: 200,
+        maxRows: 1000,
+        maxCols: 500,
         rowHeaders: false,
         colHeaders: false,
         minSpareRows: 1,
         minSpareCols: 1,
-        mergeCells: true,
         manualColumnResize: true,
         manualRowResize: true,
+        modifyColWidth: function(width, col){
+            if(width > maxwidth){
+                return maxwidth * 0.65
+            }
+        },
+        preventOverflow: 'horizontal',
         cells: function (row, col, prop) {
             var cellProperties = {};
             cellProperties.renderer = "defaultRenderer"; //uses lookup map
             return cellProperties;
         },
         afterContextMenuShow :function(key, options){
-            var sel = this.getSelected() ;
+            var sel = this.getSelected()[0];
             var i =sel[0], j =sel[1];
             var cell = this.getCell(i,j);
             if($(cell).hasClass('htBold')){
@@ -156,108 +194,22 @@ if ($table_metadata) {
                 /*
                  * For bold font
                  */
-                if(key == 'bold'){
-                    //Return index of the currently selected cells as an array [startRow, startCol, endRow, endCol]
-                    var sel = this.getSelected() ;
-                    var i, j, istart, iend, jstart, jend ;
-                    if(sel[0] > sel[2] ){
-                        istart = sel[2] ; iend = sel[0] ;
-                    }else{
-                        istart = sel[0] ; iend = sel[2] ;
-                     }
-
-                    if(sel[1] > sel[3] ){
-                        jstart = sel[3] ; jend = sel[1] ;
-                    }else{
-                        jstart = sel[1] ; jend = sel[3] ;
-                    }
-                    for(i = istart; i < iend+1; i++){
-                        for(j = jstart; j < jend+1; j++){
-                            var cell = this.getCell(i,j);
-                            if($(cell).hasClass('htBold')){
-                                $(cell).removeClass('htBold');
-                                this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className.replace(/htBold/gi,''));
-                            }else{
-                                $(cell).addClass('htBold');
-                                this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className+' htBold');
-                            }
-                        }
-                    }
+                if(key === 'bold'){
+                    htformatting(this, 'htBold');
                 }
-
 
                 /*
                  * For highlight cell
                  */
-                if (key == 'highlighted'){
-                    //Return index of the currently selected cells as an array [startRow, startCol, endRow, endCol]
-                    var sel = this.getSelected();
-                    var i, j, istart, iend, jstart, jend;
-
-                    if (sel[0] > sel[2]) {
-                        istart = sel[2];
-                        iend = sel[0];
-                    } else {
-                        istart = sel[0];
-                        iend = sel[2];
-                    }
-
-                    if (sel[1] > sel[3]) {
-                        jstart = sel[3];
-                        jend = sel[1];
-                    } else {
-                        jstart = sel[1];
-                        jend = sel[3];
-                    }
-                    for (i = istart; i < iend + 1; i++) {
-                        for (j = jstart; j < jend + 1; j++) {
-                            var cell = this.getCell(i,j);
-                            if($(cell).hasClass('highlighted')){
-                                $(cell).removeClass('highlighted');
-                                this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className.replace(/highlighted/gi,''));
-                            }else{
-                                $(cell).addClass('highlighted');
-                                this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className+' highlighted');
-                            }
-                        }
-                    }
+                if (key === 'highlighted'){
+                    htformatting(this, 'highlighted');
                 }
 
                 /*
                 * For italic font
                 */
-                if (key == 'italic'){
-                    //Return index of the currently selected cells as an array [startRow, startCol, endRow, endCol]
-                    var sel = this.getSelected();
-                    var i, j, istart, iend, jstart, jend;
-
-                    if (sel[0] > sel[2]) {
-                        istart = sel[2];
-                        iend = sel[0];
-                    } else {
-                        istart = sel[0];
-                        iend = sel[2];
-                    }
-
-                    if (sel[1] > sel[3]) {
-                        jstart = sel[3];
-                        jend = sel[1];
-                    } else {
-                        jstart = sel[1];
-                        jend = sel[3];
-                    }
-                    for (i = istart; i < iend + 1; i++) {
-                        for (j = jstart; j < jend + 1; j++) {
-                            var cell = this.getCell(i,j);
-                            if($(cell).hasClass('italic')){
-                                $(cell).removeClass('italic');
-                                this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className.replace(/italic/gi,''));
-                            }else{
-                                $(cell).addClass('italic');
-                                this.setCellMeta(i,j,'className', this.getCellMeta(i,j).className+' italic');
-                            }
-                        }
-                    }
+                if (key === 'italic'){
+                    htformatting(this, 'italic');
                 }
             },
             items: {
@@ -278,13 +230,59 @@ if ($table_metadata) {
                 "bold": {"name": "<?php echo t('Bold');?>"},
                 "italic": {"name": "<?php echo t('Italic');?>"},
                 "highlighted": {"name": "<?php echo t('Highlight');?>"}
-                
+
             }
         },
         cell: <?php echo $metadata; ?>,
-        mergeCells:  <?php echo $metadata; ?>
+        mergeCells:  <?php echo $mergedata; ?>
 
     });
 
+    function htformatting(ht, classname) {
+        var sel = ht.getSelected()[0];
+
+        var i, j, istart, iend, jstart, jend ;
+        if(sel[0] > sel[2] ){
+            istart = sel[2] ; iend = sel[0] ;
+        }else{
+            istart = sel[0] ; iend = sel[2] ;
+        }
+
+        if(sel[1] > sel[3] ){
+            jstart = sel[3] ; jend = sel[1] ;
+        }else{
+            jstart = sel[1] ; jend = sel[3] ;
+        }
+
+
+        for(i = istart; i < iend+1; i++){
+            for(j = jstart; j < jend+1; j++){
+                var cell = ht.getCell(i,j);
+                var jcell = $(cell);
+
+                if (!jcell.hasClass('htmulticell')) {
+                    if(jcell.hasClass(classname)){
+                        jcell.removeClass(classname);
+                        ht.setCellMeta(i, j, 'className', ht.getCellMeta(i, j).className.replace(classname, ''));
+                    }else{
+                        jcell.addClass(classname);
+                        var existingClasses =  ht.getCellMeta(i,j).className;
+
+                        if (typeof existingClasses === 'undefined') {
+                            existingClasses = '';
+                        }
+
+                        ht.setCellMeta(i,j,'className', existingClasses + ' ' + classname);
+                    }
+
+                    if (jcell.attr('colspan') || jcell.attr('rowspan')) {
+                        jcell.addClass('htmulticell');
+                    }
+                }
+            }
+        }
+
+        $('.htmulticell').removeClass('htmulticell');
+    }
 
 </script>

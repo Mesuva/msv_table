@@ -83,20 +83,29 @@ if (!empty($table_data)): ?>
                     $val = Markdown::defaultTransform($val);
                     $val = str_replace(array('<p>', '</p>'),'', $val);
 
-                    if ($metadata[$rowcount][$colcount]->colspan > 1) {
+                    $colspan = 0;
 
-                        for($i = $colcount + 1; $i < $metadata[$rowcount][$colcount]->colspan + $colcount; $i++ ) {
+                    if (isset($metadata[$rowcount][$colcount]->colspan)) {
+                        $colspan = $metadata[$rowcount][$colcount]->colspan;
+                    }
+
+					if ($colspan > 1) {
+						for($i = $colcount + 1; $i < $colspan + $colcount; $i++ ) {
                             $redundantcells[$rowcount][$i] = true;
                         }
                     }
 
+                    $rowspan = 0;
+                    if (isset($metadata[$rowcount][$colcount]->rowspan)) {
+                        $rowspan = $metadata[$rowcount][$colcount]->rowspan;
+                    }
 
-                    if ($metadata[$rowcount][$colcount]->rowspan > 1 && $rowcount != 0) {
+					if ($rowspan > 1 && $rowcount != 0) {
 
-                        for($i = $rowcount + 1; $i < $metadata[$rowcount][$colcount]->rowspan + $rowcount ; $i++ ) {
+						for($i = $rowcount + 1; $i < $rowspan + $rowcount ; $i++ ) {
                             $redundantcells[$i][$colcount] = true;
 
-                            for($j = $colcount + 1; $j < $metadata[$rowcount][$colcount]->colspan + $colcount; $j++ ) {
+							for($j = $colcount + 1; $j < $colspan + $colcount; $j++ ) {
                                 $redundantcells[$i][$j] = true;
                             }
 
@@ -107,10 +116,15 @@ if (!empty($table_data)): ?>
 
                     if (!isset($redundantcells[$rowcount][$colcount])) {
 
+                        $className = '';
+                        if (isset($metadata[$rowcount][$colcount]->className)) {
+                            $className = $metadata[$rowcount][$colcount]->className;
+                        }
+
                         if ($rowcount == 0) {
-                            $table .= '<' . $ct . ($metadata[$rowcount][$colcount]->colspan > 1 ? ' colspan="' . $metadata[$rowcount][$colcount]->colspan . '"' : '') .  ' class="col' . $colcount . $empty . ' ' .  $metadata[$rowcount][$colcount]->className . '">' . $val . '</' . $ct . '>';
+							$table .= '<' . $ct . ($colspan > 1 ? ' colspan="' . $colspan . '"' : '') .  ' class="col' . $colcount . $empty . ' ' .  $className . '">' . $val . '</' . $ct . '>';
                         } else{
-                            $table .= '<' . $ct . ($metadata[$rowcount][$colcount]->colspan > 1 ? ' colspan="' . $metadata[$rowcount][$colcount]->colspan . '" ': '') .  ($metadata[$rowcount][$colcount]->rowspan > 1 ? ' rowspan="' . $metadata[$rowcount][$colcount]->rowspan . '"' : '') . ' class="col' . $colcount . $empty . ' ' . $metadata[$rowcount][$colcount]->className  . '">' . $val . '</' . $ct . '>';
+							$table .= '<' . $ct . ($colspan > 1 ? ' colspan="' . $colspan . '" ': '') .  ($rowspan > 1 ? ' rowspan="' . $rowspan . '"' : '') . ' class="col' . $colcount . $empty . ' ' . $className  . '">' . $val . '</' . $ct . '>';
                         }
 
                     }

@@ -1,9 +1,10 @@
 <?php  defined('C5_EXECUTE') or die("Access Denied.");
-$json = Core::make('helper/json');
+$app = \Concrete\Core\Support\Facade\Application::getFacadeApplication();
+$json = $app->make('helper/json');
 
 $template = '';
 
-if ($b) {
+if (isset($b)) {
     $template = $b->getBlockFilename();
 }
 ?>
@@ -20,9 +21,9 @@ if ($b) {
 </ul>
 
 
-<textarea id="<?php echo $bID; ?>_table_data" name="table_data"  style="display:  none;  "><?php  echo htmlspecialchars($table_data, ENT_NOQUOTES); ?></textarea>
-<textarea id="<?php echo $bID; ?>_table_metadata" name="table_metadata" style="display:  none;  "><?php  echo $table_metadata; ?></textarea>
-<div id="<?php echo $bID; ?>_tabledata"></div>
+<textarea id="<?php echo $uniqueid; ?>_table_data" name="table_data"  style="display:  none;  "><?php  echo htmlspecialchars($table_data, ENT_NOQUOTES); ?></textarea>
+<textarea id="<?php echo $uniqueid; ?>_table_metadata" name="table_metadata" style="display:  none;  "><?php  echo $table_metadata; ?></textarea>
+<div id="<?php echo $uniqueid; ?>_tabledata"></div>
 
 
-<?php $this->inc('editor.php', array('template'=>$template)); ?>
+<?php $this->inc('editor.php', array('template'=>$template, 'uniqueid'=>$uniqueid)); ?>
